@@ -1,6 +1,9 @@
 variables:
   buildConfiguration: 'Release'
 
+
+pool: MyPool
+
 steps:
 - task: DotNetCoreCLI@2
   inputs:
