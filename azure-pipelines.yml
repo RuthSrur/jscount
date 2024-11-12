@@ -1,17 +1,26 @@
 variables:
   buildConfiguration: 'Release'
 
-
 pool: MyPool
 
 steps:
-- task: DotNetCoreCLI@2
+- task: CopyFiles@2
   inputs:
-    command: 'publish'
-    publishWebProjects: true
+    SourceFolder: '$(System.DefaultWorkingDirectory)'
+    Contents: '**'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.ArtifactStagingDirectory)'
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/webapp.zip'
+    replaceExistingArchive: true
+
 - task: AzureWebApp@1
   inputs:
-    azureSubscription: 'AzurePortal'
-    appType: 'webAppLinux'
-    appName: 'Webcounter-app'
-    package: '$(System.DefaultWorkingDirectory)/**/*.zip'
+    azureSubscription: 'AzurePortal' 
+    appType: 'webApp'
+    appName: 'Webcounter-app'      
+    package: '$(Build.ArtifactStagingDirectory)/webapp.zip'
